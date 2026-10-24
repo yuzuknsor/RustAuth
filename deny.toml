@@ -7,13 +7,6 @@ targets = [
   { triple = "x86_64-pc-windows-msvc" },
 ]
 all-features = true
-# 工作区自身以 AGPL-3.0-or-later 发布（outbound），不在审计范围；
-# 审计对象是依赖树：依赖必须为宽纵许可。
-exclude = [
-  "rustauth-core",
-  "rustauth-gui",
-  "rustauth-cli",
-]
 
 [licenses]
 version = 2
@@ -33,6 +26,20 @@ allow = [
   "Unicode-DFS-2016",
 ]
 confidence-threshold = 0.93
+
+# 工作区自身 crate 以 AGPL-3.0-or-later 发布（outbound 许可）；
+# 依赖树仍然只允许上面的宽纵清单（copyleft 依赖一律拒绝）。
+[[licenses.exceptions]]
+allow = ["AGPL-3.0-or-later"]
+name = "rustauth-core"
+
+[[licenses.exceptions]]
+allow = ["AGPL-3.0-or-later"]
+name = "rustauth-gui"
+
+[[licenses.exceptions]]
+allow = ["AGPL-3.0-or-later"]
+name = "rustauth-cli"
 
 [bans]
 multiple-versions = "warn"
