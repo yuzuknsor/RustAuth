@@ -1,7 +1,7 @@
 # WinAuth Rust 重构总体规划
 
-> 版本 v1.0 · 2026-10-24 · 奠基于原仓库 master（commit 2018-10-12）实测
-> 决策前提：全新 Rust 重写 · 独立产品 · GPL-3.0 · B+C 路线（重写核心+精简范围）
+> 版本 v1.1 · 2026-10-24 · 奠基于原仓库 master（commit 2018-10-12）实测
+> 决策前提：全新 Rust 重写 · 独立产品 · **AGPL-3.0-or-later**（依据 FSF 单向兼容自上游 GPL-3.0-or-later，见 NOTICE）· B+C 路线（重写核心+精简范围）
 
 ---
 
@@ -200,7 +200,7 @@ CLI(clap) · bnet 恢复/注册(T2/T3) · Steam 交易确认（实验） · vaul
 | 旧格式迁移边角（YubiKey/老版本 XML） | 中 | 部分用户无法迁移 | 明确不支持清单+报错文案 |
 | Rust 学习曲线拖慢 M1 | 中 | 延期 1-2 天 | 已计入估时；clippy 当导师 |
 | DPAPI FFI 细节 | 中 | M2 卡顿 | windows crate 官方样例为纲 |
-| GPL 合规疏漏 | 低 | 法律风险 | 保 LICENSE+README 声明衍生关系；不引入不兼容许可依赖（全部 MIT/Apache-2.0 系） |
+| GPL/AGPL 合规疏漏 | 低 | 法律风险 | LICENSE(AGPL)+NOTICE 溯源（Colin Mackie, GPL-3.0-or-later）已入库；依赖仅 MIT/Apache 系，deny.toml+CI 自动审计拒绝 copyleft 依赖 |
 | 范围蔓延（想支持的提供商越加越多） | 高 | 全线延期 | 功能去向表为宪法，新增一律进 M5 池 |
 
 ## 7. Git 与发布
@@ -225,6 +225,7 @@ CLI(clap) · bnet 恢复/注册(T2/T3) · Steam 交易确认（实验） · vaul
 ## 9. 决策记录（ADR）
 
 1. **Rust 全量重写**：语言学习为主目标之一，C# 方案已弃。
+1b. **协议进化 AGPL-3.0-or-later**：上游为 GPL-3.0-or-later，"or later" + FSF 矩阵（GPLv3→AGPLv3 单向）允许衍生作品以 AGPL 传播；反向不允许。社区规范全套（NOTICE/CONTRIBUTING/SECURITY/COC/模板/CI 许可审计）随 M0 落库。
 2. **enum 优先 trait**：提供商封闭集，穷举优于动态分发。
 3. **同步优先**：无 tokio；网络需求用 blocking 客户端。
 4. **egui 而非 Tauri**：100% Rust，最大化技能积累。

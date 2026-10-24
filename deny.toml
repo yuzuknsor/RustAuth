@@ -1,0 +1,37 @@
+# cargo-deny 配置：依赖许可审计
+# 政策：本工程 outbound 为 AGPL-3.0-or-later，依赖只接受宽纵许可；
+# 明确拒绝任何 copyleft（GPL/AGPL/LGPL/SSPL/BUSL）依赖进入依赖树。
+
+[graph]
+targets = [
+  { triple = "x86_64-pc-windows-msvc" },
+]
+all-features = true
+
+[licenses]
+version = 2
+allow = [
+  "MIT",
+  "Apache-2.0",
+  "Apache-2.0 WITH LLVM-exception",
+  "BSD-2-Clause",
+  "BSD-3-Clause",
+  "ISC",
+  "Zlib",
+  "0BSD",
+  "BSL-1.0",
+  "CC0-1.0",
+  "CDLA-Permissive-2.0",
+  "Unicode-3.0",
+  "Unicode-DFS-2016",
+]
+confidence-threshold = 0.93
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+highlight = "all"
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"

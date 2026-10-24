@@ -1,0 +1,13 @@
+[package]
+name = "winauth-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "WinAuth 命令行（M5 可选）"
+
+[[bin]]
+name = "winauth-cli"
+path = "src/main.rs"
+
+[dependencies]
+winauth-core = { path = "../winauth-core" }

@@ -1,0 +1,31 @@
+WinAuth (Rust rewrite)
+Copyright (C) 2026 KNSOR
+SPDX-License-Identifier: AGPL-3.0-or-later
+
+This project is a ground-up rewrite in Rust of WinAuth:
+    https://github.com/winauth/winauth
+    Copyright (C) 2011 Colin Mackie and WinAuth contributors
+    Licensed under GPL-3.0-or-later
+
+Portions of this software — authenticator algorithm behavior, legacy
+data-format handling and migration logic — are derived from that
+GPL-3.0-or-later work.
+
+License upgrade note
+--------------------
+The original work is GPL-3.0-OR-LATER: the "or later" option together
+with the FSF license compatibility matrix (GPLv3 -> AGPLv3 is one-way
+compatible) permits conveying this derivative work under the terms of
+the GNU Affero General Public License 3.0. This rewrite therefore
+distributes under AGPL-3.0-or-later, which preserves every obligation
+of the GPL and adds stronger network-use source-sharing protections.
+The reverse (AGPL -> GPL) would not be permitted.
+
+The original GPL-3.0 text and the unmodified upstream source remain
+available at the URL above and on this repository's frozen `master`
+branch.
+
+Third-party dependencies are permissively licensed (MIT, Apache-2.0,
+BSD, ISC, Zlib or Unicode-3.0) and are compatible with AGPL-3.0.
+Automated dependency license auditing is configured in `deny.toml`
+and enforced in CI.
