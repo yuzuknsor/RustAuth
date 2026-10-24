@@ -3,7 +3,10 @@
 
 //! rustauth-core：RustAuth 核心库。
 //!
-//! M1 起逐步提供：OTP 算法（RFC 4226/6238、Steam、Battle.net）、
-//! otpauth:// URI、vault 加密存储与旧版迁移。
+//! 模块：OTP 算法（RFC 4226/6238、Steam、Battle.net）、otpauth:// URI、
+//! vault 加密存储与旧版 WinAuth 迁移（M2/M4 陆续到位）。
+
+pub mod base32;
+pub mod otp;
 
 pub const NAME: &str = "rustauth-core";
