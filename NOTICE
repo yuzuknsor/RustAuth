@@ -1,6 +1,8 @@
-WinAuth (Rust rewrite)
+RustAuth
 Copyright (C) 2026 KNSOR
 SPDX-License-Identifier: AGPL-3.0-or-later
+
+RustAuth is a Windows desktop authenticator, written in Rust.
 
 This project is a ground-up rewrite in Rust of WinAuth:
     https://github.com/winauth/winauth
@@ -16,7 +18,7 @@ License upgrade note
 The original work is GPL-3.0-OR-LATER: the "or later" option together
 with the FSF license compatibility matrix (GPLv3 -> AGPLv3 is one-way
 compatible) permits conveying this derivative work under the terms of
-the GNU Affero General Public License 3.0. This rewrite therefore
+the GNU Affero General Public License 3.0. RustAuth therefore
 distributes under AGPL-3.0-or-later, which preserves every obligation
 of the GPL and adds stronger network-use source-sharing protections.
 The reverse (AGPL -> GPL) would not be permitted.
@@ -24,6 +26,13 @@ The reverse (AGPL -> GPL) would not be permitted.
 The original GPL-3.0 text and the unmodified upstream source remain
 available at the URL above and on this repository's frozen `master`
 branch.
+
+Naming note
+-----------
+"RustAuth" describes an authenticator written in Rust. This project is
+not affiliated with or endorsed by the Rust Foundation or the Rust
+project, nor with the original WinAuth project or any unrelated
+projects sharing this name.
 
 Third-party dependencies are permissively licensed (MIT, Apache-2.0,
 BSD, ISC, Zlib or Unicode-3.0) and are compatible with AGPL-3.0.

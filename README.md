@@ -1,4 +1,4 @@
-# WinAuth (Rust)
+# RustAuth
 
 Windows 桌面验证器（authenticator）：通用 TOTP、Steam Guard、Battle.net 登录码。
 托盘常驻、取码即走、vault 格式公开可迁移。
@@ -7,7 +7,7 @@ Windows 桌面验证器（authenticator）：通用 TOTP、Steam Guard、Battle.
 
 ## 溯源与许可证
 
-本项目是 [winauth/winauth](https://github.com/winauth/winauth)（Copyright (C) 2011
+RustAuth 是 [winauth/winauth](https://github.com/winauth/winauth)（Copyright (C) 2011
 Colin Mackie，GPL-3.0-or-later，已归档停更）的全新 Rust 重写，属其衍生作品。
 
 - 本仓库以 **AGPL-3.0-or-later** 发布——上游为 "GPL-3.0 **或更高版本**"，
@@ -16,6 +16,8 @@ Colin Mackie，GPL-3.0-or-later，已归档停更）的全新 Rust 重写，属�
 - AGPL 对 GPL 附加了"网络交互也须提供源码"的更强传染性条款；桌面应用场景
   下与 GPL 义务一致：分发二进制时必须提供对应源码（本仓库即源）。
 - 详见 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)；上游原始代码冻结保留在 `master` 分支。
+- 本项目与 Rust 基金会 / Rust 官方 / 上游 WinAuth 及任何同名项目无关，
+  "Rust" 仅作语言描述性使用。
 
 ## 功能目标
 
@@ -46,3 +48,8 @@ cargo clippy --workspace --all-targets -- -D warnings
 ## 贡献
 
 见 [CONTRIBUTING.md](CONTRIBUTING.md)。提交即表示贡献以 AGPL-3.0-or-later 授权。
+
+---
+
+© 2026 [KNSOR](https://github.com/yuzuknsor) · AGPL-3.0-or-later ·
+衍生自 Colin Mackie 的 WinAuth（GPL-3.0-or-later）

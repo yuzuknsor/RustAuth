@@ -1,0 +1,13 @@
+[package]
+name = "rustauth-cli"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "RustAuth 命令行（M5 可选）"
+
+[[bin]]
+name = "rustauth-cli"
+path = "src/main.rs"
+
+[dependencies]
+rustauth-core = { path = "../rustauth-core" }

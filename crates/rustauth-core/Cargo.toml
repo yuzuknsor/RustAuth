@@ -1,9 +1,9 @@
 [package]
-name = "winauth-core"
+name = "rustauth-core"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "WinAuth 重写核心库：TOTP/Steam/Battle.net 验证码、vault 加密存储、旧版迁移"
+description = "RustAuth 核心库：TOTP/Steam/Battle.net 验证码、vault 加密存储、旧版迁移"
 
 [dependencies]
 hmac = "0.12"

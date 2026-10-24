@@ -91,6 +91,31 @@ dependencies = [
 ]
 
 [[package]]
+name = "rustauth-cli"
+version = "0.1.0"
+dependencies = [
+ "rustauth-core",
+]
+
+[[package]]
+name = "rustauth-core"
+version = "0.1.0"
+dependencies = [
+ "hmac",
+ "sha1",
+ "sha2",
+ "thiserror",
+ "zeroize",
+]
+
+[[package]]
+name = "rustauth-gui"
+version = "0.1.0"
+dependencies = [
+ "rustauth-core",
+]
+
+[[package]]
 name = "sha1"
 version = "0.10.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -166,31 +191,6 @@ name = "version_check"
 version = "0.9.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
-
-[[package]]
-name = "winauth-cli"
-version = "0.1.0"
-dependencies = [
- "winauth-core",
-]
-
-[[package]]
-name = "winauth-core"
-version = "0.1.0"
-dependencies = [
- "hmac",
- "sha1",
- "sha2",
- "thiserror",
- "zeroize",
-]
-
-[[package]]
-name = "winauth-gui"
-version = "0.1.0"
-dependencies = [
- "winauth-core",
-]
 
 [[package]]
 name = "zeroize"

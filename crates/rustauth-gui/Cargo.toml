@@ -1,0 +1,15 @@
+[package]
+name = "rustauth-gui"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "RustAuth GUI 壳（egui）：列表 / 托盘 / 热键 / 剪贴板"
+
+[[bin]]
+name = "rustauth"
+path = "src/main.rs"
+
+[dependencies]
+rustauth-core = { path = "../rustauth-core" }
+
+[dev-dependencies]

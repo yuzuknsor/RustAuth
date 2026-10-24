@@ -1,6 +1,6 @@
 # 贡献指南
 
-感谢关注 WinAuth 的 Rust 重写。
+感谢关注 RustAuth（WinAuth 的 Rust 重写）。
 
 ## 开发环境
 

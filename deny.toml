@@ -7,6 +7,13 @@ targets = [
   { triple = "x86_64-pc-windows-msvc" },
 ]
 all-features = true
+# 工作区自身以 AGPL-3.0-or-later 发布（outbound），不在审计范围；
+# 审计对象是依赖树：依赖必须为宽纵许可。
+exclude = [
+  "rustauth-core",
+  "rustauth-gui",
+  "rustauth-cli",
+]
 
 [licenses]
 version = 2

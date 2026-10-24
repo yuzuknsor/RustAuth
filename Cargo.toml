@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = ["crates/winauth-core", "crates/winauth-gui", "crates/winauth-cli"]
+members = ["crates/rustauth-core", "crates/rustauth-gui", "crates/rustauth-cli"]
 
 [workspace.package]
 version = "0.1.0"

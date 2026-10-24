@@ -1,4 +1,4 @@
-# WinAuth Rust 重构总体规划
+# RustAuth（WinAuth Rust 重写）总体规划
 
 > 版本 v1.1 · 2026-10-24 · 奠基于原仓库 master（commit 2018-10-12）实测
 > 决策前提：全新 Rust 重写 · 独立产品 · **AGPL-3.0-or-later**（依据 FSF 单向兼容自上游 GPL-3.0-or-later，见 NOTICE）· B+C 路线（重写核心+精简范围）
@@ -52,15 +52,15 @@
 ### 3.1 Cargo Workspace
 
 ```
-winauth/
+rustauth/
 ├── crates/
-│   ├── winauth-core/      # 纯算法+格式，零网络、零UI（feature "enroll" 才引 reqwest）
+│   ├── rustauth-core/      # 纯算法+格式，零网络、零UI（feature "enroll" 才引 reqwest）
 │   │   ├── src/otp/       # base32, hotp, totp, steam, bnet(T1)
 │   │   ├── src/otpauth/   # URI 解析/构建
 │   │   ├── src/vault/     # 格式 v1、DPAPI、aes-gcm、argon2(可选层)
 │   │   └── src/migrate/   # 旧 WinAuth XML 解析+解密（M4）
-│   ├── winauth-gui/       # eframe(egui) + tray-icon + global-hotkey + arboard
-│   └── winauth-cli/       # M5 可选，clap
+│   ├── rustauth-gui/       # eframe(egui) + tray-icon + global-hotkey + arboard
+│   └── rustauth-cli/       # M5 可选，clap
 ├── docs/                  # vault-format-v1.md（公开格式规范）、本规划
 └── .github/workflows/     # ci.yml(test+clippy+fmt)、release.yml(cargo-dist)
 ```
@@ -98,7 +98,7 @@ impl Provider {
 ### 3.3 Vault 格式 v1（核心资产，字节级规范）
 
 ```
-winauth.vault（小端）
+rustauth.vault（小端）
 offset size  field
 0      8     magic  "WVAULT\x00" + version(1)
 8      4     header_len (u32)
@@ -128,7 +128,7 @@ TOTP 失败首因是时钟。设计：本地时钟为真（Windows 已 NTP 同�
 - 托盘（tray-icon）：菜单【显示/复制第一个码/退出】；关窗=最小化到托盘；单实例 named mutex。
 - 热键（global-hotkey）：默认 `Ctrl+Alt+C` 复制激活条目，可改。
 - 剪贴板（arboard）：复制即起 30s 清除定时器（可配关闭）。
-- 设置：`%APPDATA%\winauth\settings.json`（热键/清除时长/启动项）。
+- 设置：`%APPDATA%\rustauth\settings.json`（热键/清除时长/启动项）。
 
 ## 4. 里程碑（任务级分解）
 
