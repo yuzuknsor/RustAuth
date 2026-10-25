@@ -28,7 +28,11 @@ fn main() {
                 .unwrap_or(0);
             println!("迁移条目数: {}", entries.len());
             for e in &entries {
-                let code = e.clone().into_provider().code_at(ms).unwrap_or_else(|e| format!("ERR {e}"));
+                let code = e
+                    .clone()
+                    .into_provider()
+                    .code_at(ms)
+                    .unwrap_or_else(|e| format!("ERR {e}"));
                 println!(
                     "  名称={:?} 类型={} 位数={} 周期={}s 偏移={}ms 密钥={}字节",
                     e.name,

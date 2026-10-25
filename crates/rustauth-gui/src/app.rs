@@ -33,6 +33,15 @@ pub struct RustAuthApp {
     add_secret: String,
     add_kind: KindChoice,
     add_error: Option<String>,
+    // 旧版导入状态
+    import_open: bool,
+    import_path: String,
+    import_password: String,
+    import_error: Option<String>,
+    // 设置窗口
+    settings_open: bool,
+    /// 新码自动复制的去重记录
+    auto_copy_last: Option<String>,
     // 改名状态
     rename_id: Option<String>,
     rename_text: String,
@@ -98,6 +107,12 @@ impl RustAuthApp {
             add_secret: String::new(),
             add_kind: KindChoice::Totp,
             add_error: None,
+            import_open: false,
+            import_path: String::new(),
+            import_password: String::new(),
+            import_error: None,
+            settings_open: false,
+            auto_copy_last: None,
             rename_id: None,
             rename_text: String::new(),
             confirm_delete: None,
@@ -205,6 +220,18 @@ impl eframe::App for RustAuthApp {
             }
         }
 
+        // —— 新码自动复制（第一条目，WinAuth 同款行为）——
+        if self.settings.copy_on_new_code {
+            if let Some(first) = self.vault.entries().first() {
+                if let Ok(code) = first.code_at(ms) {
+                    if self.auto_copy_last.as_deref() != Some(code.as_str()) {
+                        self.auto_copy_last = Some(code.clone());
+                        self.copy_code(&code);
+                    }
+                }
+            }
+        }
+
         // 码与进度条实时性
         ctx.request_repaint_after(Duration::from_millis(250));
     }
@@ -217,6 +244,19 @@ impl eframe::App for RustAuthApp {
             ui.horizontal(|ui| {
                 ui.heading("RustAuth");
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                    if ui.button("⚙").clicked() {
+                        self.settings_open = true;
+                    }
+                    if ui.button("导入").clicked() {
+                        self.import_open = true;
+                        self.import_error = None;
+                        if self.import_path.is_empty() {
+                            if let Some(p) = dirs::data_dir() {
+                                self.import_path =
+                                    p.join("WinAuth").join("winauth.xml").display().to_string();
+                            }
+                        }
+                    }
                     if ui.button("＋ 添加").clicked() {
                         self.add_open = true;
                         self.add_error = None;
@@ -417,17 +457,195 @@ impl eframe::App for RustAuthApp {
                 self.rename_id = None;
             }
         }
+
+        // —— 旧版导入窗口 ——
+        if self.import_open {
+            let mut win_open = true;
+            let mut close = false;
+            egui::Window::new("从旧版 WinAuth 导入")
+                .open(&mut win_open)
+                .collapsible(false)
+                .show(&ctx, |ui| {
+                    ui.horizontal(|ui| {
+                        ui.label("配置文件：");
+                        ui.add(
+                            egui::TextEdit::singleline(&mut self.import_path).desired_width(280.0),
+                        );
+                        if ui.button("浏览…").clicked() {
+                            if let Some(p) = rfd::FileDialog::new()
+                                .add_filter("WinAuth 配置", &["xml"])
+                                .pick_file()
+                            {
+                                self.import_path = p.display().to_string();
+                            }
+                        }
+                    });
+                    ui.horizontal(|ui| {
+                        ui.label("配置密码：");
+                        ui.add(
+                            egui::TextEdit::singleline(&mut self.import_password)
+                                .password(true)
+                                .desired_width(200.0),
+                        );
+                        ui.small("未设密码可留空");
+                    });
+                    ui.small("支持 Google/Battle.net/Steam 条目；YubiKey 加密条目不支持");
+                    if let Some(err) = &self.import_error {
+                        ui.colored_label(egui::Color32::from_rgb(220, 80, 80), err);
+                    }
+                    ui.add_space(6.0);
+                    ui.horizontal(|ui| {
+                        if ui.button("导入").clicked() {
+                            match self.try_import() {
+                                Ok(n) => {
+                                    self.set_toast(format!("导入 {n} 个条目"));
+                                    close = true;
+                                }
+                                Err(e) => self.import_error = Some(e),
+                            }
+                        }
+                        if ui.button("取消").clicked() {
+                            close = true;
+                        }
+                    });
+                });
+            if !win_open || close {
+                self.import_open = false;
+                self.import_password.clear();
+                self.import_error = None;
+            }
+        }
+
+        // —— 设置窗口 ——
+        if self.settings_open {
+            let mut win_open = true;
+            egui::Window::new("设置")
+                .open(&mut win_open)
+                .collapsible(false)
+                .show(&ctx, |ui| {
+                    let mut dirty = false;
+                    if ui
+                        .checkbox(&mut self.settings.close_to_tray, "关闭窗口时驻留托盘")
+                        .changed()
+                    {
+                        dirty = true;
+                    }
+                    if ui
+                        .checkbox(
+                            &mut self.settings.hotkey_enabled,
+                            "全局热键 Ctrl+Alt+C 复制",
+                        )
+                        .changed()
+                    {
+                        self.apply_hotkey_setting();
+                        dirty = true;
+                    }
+                    if ui
+                        .checkbox(&mut self.settings.copy_on_new_code, "新码自动复制")
+                        .changed()
+                    {
+                        dirty = true;
+                    }
+                    ui.horizontal(|ui| {
+                        ui.label("剪贴板清除：");
+                        let mut secs = self.settings.clipboard_clear_secs as f32;
+                        let slider = ui.add(
+                            egui::Slider::new(&mut secs, 0.0..=120.0)
+                                .suffix("s")
+                                .text("0 = 不清除"),
+                        );
+                        if slider.changed() {
+                            self.settings.clipboard_clear_secs = secs as u64;
+                            dirty = true;
+                        }
+                    });
+                    if dirty {
+                        self.settings.save();
+                        self.set_toast("设置已保存".into());
+                    }
+                });
+            if !win_open {
+                self.settings_open = false;
+            }
+        }
     }
 }
 
 impl RustAuthApp {
+    /// 从旧版配置导入。
+    fn try_import(&mut self) -> Result<usize, String> {
+        let path = self.import_path.trim().to_string();
+        if path.is_empty() {
+            return Err("请填写配置文件路径".into());
+        }
+        let xml = std::fs::read_to_string(&path).map_err(|e| format!("读取失败: {e}"))?;
+        let pw = if self.import_password.is_empty() {
+            None
+        } else {
+            Some(self.import_password.as_str())
+        };
+        let legacy = rustauth_core::migrate::parse_config(&xml, pw).map_err(|e| e.to_string())?;
+        let mut count = 0usize;
+        for l in legacy {
+            let name = if l.name.is_empty() {
+                "导入条目".to_string()
+            } else {
+                l.name.clone()
+            };
+            let provider = l.into_provider();
+            self.vault
+                .add_entry(&name, provider)
+                .map_err(|e| e.to_string())?;
+            count += 1;
+        }
+        self.persist();
+        Ok(count)
+    }
+
+    /// 热键开关即时生效（重建管理器，Drop 注销旧注册）。
+    fn apply_hotkey_setting(&mut self) {
+        self.hotkey = None;
+        if self.settings.hotkey_enabled {
+            if let Ok(m) = GlobalHotKeyManager::new() {
+                let hk = HotKey::new(Some(Modifiers::CONTROL | Modifiers::ALT), Code::KeyC);
+                if let Err(e) = m.register(hk) {
+                    eprintln!("热键注册失败: {e:?}");
+                }
+                self.hotkey = Some(m);
+            }
+        }
+    }
+
     fn try_add(&mut self) -> Result<(), String> {
         let name = self.add_name.trim().to_string();
+        let raw = self.add_secret.trim().to_string();
+
+        // otpauth:// URI 直贴
+        if raw.starts_with("otpauth://") {
+            let uri =
+                rustauth_core::otp::otpauth::parse(&raw).map_err(|e| format!("URI 无效: {e}"))?;
+            let provider = uri.to_provider().map_err(|e| e.to_string())?;
+            let name = if name.is_empty() {
+                uri.issuer
+                    .clone()
+                    .or_else(|| uri.label.split(':').next().map(|s| s.to_string()))
+                    .filter(|s| !s.is_empty())
+                    .unwrap_or_else(|| "导入条目".to_string())
+            } else {
+                name
+            };
+            self.vault
+                .add_entry(&name, provider)
+                .map_err(|e| e.to_string())?;
+            self.persist();
+            self.set_toast(format!("已添加「{name}」"));
+            return Ok(());
+        }
+
         if name.is_empty() {
             return Err("名称不能为空".into());
         }
-        let cleaned: String = self
-            .add_secret
+        let cleaned: String = raw
             .chars()
             .filter(|c| !c.is_whitespace() && *c != '-')
             .map(|c| c.to_ascii_uppercase())
