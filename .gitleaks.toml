@@ -15,5 +15,6 @@ paths = [
   '''crates/rustauth-core/src/vault/mod\.rs''',
   '''crates/rustauth-core/examples/seed_vault\.rs''',
   '''crates/rustauth-core/examples/migrate_check\.rs''',
+  '''crates/rustauth-gui/src/app\.rs''',
   '''scripts/ui_smoke\.ps1''',
 ]
