@@ -12,7 +12,7 @@ Windows 桌面验证器（authenticator）：通用 TOTP、Steam Guard、Battle.
 最新版 [RustAuth-v0.1.1-windows-x64.zip](https://github.com/yuzuknsor/winauth/releases/latest)
 （免安装，解压即用；或从源码构建：`cargo build --release -p rustauth-gui`）。
 
-> 上游原始 C# 代码存档于 `master` 分支；RustAuth 开发历史在主开发分支。
+> 本仓库为独立 Rust 工程；上游原始 C# 仓库见 [winauth/winauth](https://github.com/winauth/winauth)（已归档）。
 
 ## 功能
 
@@ -40,7 +40,7 @@ Colin Mackie，GPL-3.0-or-later，已归档停更）的全新 Rust 重写，属�
 - 本仓库以 **AGPL-3.0-or-later** 发布——上游为 "GPL-3.0 **或更高版本**"，
   依据 FSF 许可证兼容矩阵（GPLv3 → AGPLv3 单向兼容），衍生作品可选择以
   AGPL-3.0 传播，反向（AGPL → GPL）不允许。
-- 详见 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)；上游原始代码冻结保留在 `master` 分支。
+- 详见 [LICENSE](LICENSE) 与 [NOTICE]；上游原始代码见其公开仓库。
 - 本项目与 Rust 基金会 / Rust 官方 / 上游 WinAuth 及任何同名项目无关，
   "Rust" 仅作语言描述性使用。
 
