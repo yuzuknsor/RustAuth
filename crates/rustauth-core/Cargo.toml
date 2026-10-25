@@ -14,9 +14,12 @@ zeroize.workspace = true
 serde = { workspace = true, features = ["derive"] }
 serde_json.workspace = true
 base64 = "0.22"
+aes = "0.8"
 aes-gcm = "0.10"
 getrandom = "0.2"
 argon2 = "0.5"
+blowfish = "0.9"
+pbkdf2 = "0.12"
 
 [target.'cfg(windows)'.dependencies]
 windows = { version = "0.58", features = [

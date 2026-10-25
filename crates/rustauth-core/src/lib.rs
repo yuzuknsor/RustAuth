@@ -7,6 +7,7 @@
 //! vault 加密存储、旧版 WinAuth 迁移（M4）。
 
 pub mod base32;
+pub mod migrate;
 pub mod otp;
 pub mod vault;
 
