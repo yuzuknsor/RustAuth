@@ -5,8 +5,6 @@
 //!
 //! 用法：cargo run -p rustauth-core --example vault_import_check -- <winauth.xml> <固定Unix秒>
 
-use std::time::{SystemTime, UNIX_EPOCH};
-
 use rustauth_core::migrate::parse_config;
 use rustauth_core::vault::Vault;
 
@@ -26,7 +24,11 @@ fn main() {
     // 2) 入库并落盘
     let mut vault = Vault::new().unwrap();
     for l in &legacy {
-        let name = if l.name.is_empty() { "导入".into() } else { l.name.clone() };
+        let name = if l.name.is_empty() {
+            "导入".into()
+        } else {
+            l.name.clone()
+        };
         vault.add_entry(&name, l.clone().into_provider()).unwrap();
     }
     let path = std::env::temp_dir().join("rustauth-verify.vault");
