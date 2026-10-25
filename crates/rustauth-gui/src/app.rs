@@ -30,7 +30,10 @@ pub struct RustAuthApp {
     // 添加对话框状态
     add_open: bool,
     add_name: String,
+    /// 密钥明文常驻内存；丢弃前必须 zeroize（见 close_add_dialog）
     add_secret: String,
+    /// 密钥输入框是否显示明文（默认遮罩防旁窥）
+    add_secret_visible: bool,
     add_kind: KindChoice,
     add_error: Option<String>,
     // 旧版导入状态
@@ -105,6 +108,7 @@ impl RustAuthApp {
             add_open: false,
             add_name: String::new(),
             add_secret: String::new(),
+            add_secret_visible: false,
             add_kind: KindChoice::Totp,
             add_error: None,
             import_open: false,
@@ -379,9 +383,19 @@ impl eframe::App for RustAuthApp {
                         ui.label("密钥：");
                         ui.add(
                             egui::TextEdit::singleline(&mut self.add_secret)
-                                .desired_width(300.0)
+                                .desired_width(280.0)
+                                .password(!self.add_secret_visible)
                                 .hint_text("Base32，如 JBSWY3DPEHPK3PXP"),
                         );
+                        // 旁窥防护默认遮罩；核对输入时可临时显示
+                        let eye = if self.add_secret_visible {
+                            "隐藏"
+                        } else {
+                            "显示"
+                        };
+                        if ui.small_button(eye).clicked() {
+                            self.add_secret_visible = !self.add_secret_visible;
+                        }
                     });
                     ui.small("密钥只保存在本机 vault（AES-256-GCM 加密）");
                     if let Some(err) = &self.add_error {
@@ -403,7 +417,10 @@ impl eframe::App for RustAuthApp {
             if !win_open || close {
                 self.add_open = false;
                 self.add_name.clear();
-                self.add_secret.clear();
+                // 密钥用后即毁：清零堆内存再置空（clear 只置长度不清字节）
+                use zeroize::Zeroize;
+                self.add_secret.zeroize();
+                self.add_secret_visible = false;
                 self.add_error = None;
             }
         }
@@ -511,7 +528,8 @@ impl eframe::App for RustAuthApp {
                 });
             if !win_open || close {
                 self.import_open = false;
-                self.import_password.clear();
+                use zeroize::Zeroize;
+                self.import_password.zeroize();
                 self.import_error = None;
             }
         }
@@ -617,8 +635,9 @@ impl RustAuthApp {
     }
 
     fn try_add(&mut self) -> Result<(), String> {
+        use zeroize::Zeroize;
         let name = self.add_name.trim().to_string();
-        let raw = self.add_secret.trim().to_string();
+        let mut raw = self.add_secret.trim().to_string();
 
         // otpauth:// URI 直贴
         if raw.starts_with("otpauth://") {
@@ -639,18 +658,27 @@ impl RustAuthApp {
                 .map_err(|e| e.to_string())?;
             self.persist();
             self.set_toast(format!("已添加「{name}」"));
+            raw.zeroize();
             return Ok(());
         }
 
         if name.is_empty() {
             return Err("名称不能为空".into());
         }
-        let cleaned: String = raw
+        let mut cleaned: String = raw
             .chars()
             .filter(|c| !c.is_whitespace() && *c != '-')
             .map(|c| c.to_ascii_uppercase())
             .collect();
-        let secret = base32::decode(&cleaned).map_err(|e| format!("密钥 Base32 无效: {e}"))?;
+        raw.zeroize();
+        let secret = match base32::decode(&cleaned) {
+            Ok(s) => s,
+            Err(e) => {
+                cleaned.zeroize();
+                return Err(format!("密钥 Base32 无效: {e}"));
+            }
+        };
+        cleaned.zeroize();
         if secret.is_empty() {
             return Err("密钥不能为空".into());
         }

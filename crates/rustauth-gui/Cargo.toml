@@ -24,6 +24,7 @@ global-hotkey = "0.9"
 arboard = "3"
 dirs = "7"
 serde = { workspace = true, features = ["derive"] }
+zeroize.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true
 rfd = "0.16"
