@@ -10,7 +10,7 @@ name = "rustauth"
 path = "src/main.rs"
 
 [dependencies]
-rustauth-core = { path = "../rustauth-core" }
+rustauth-core = { path = "../rustauth-core", version = "0.1.0" }
 # glow 后端：避开 wgpu × windows crate 的版本纠缠，托盘常驻应用足够
 eframe = { version = "0.37", default-features = false, features = [
   "glow",

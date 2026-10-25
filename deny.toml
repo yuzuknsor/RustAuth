@@ -48,6 +48,7 @@ name = "rustauth-cli"
 
 [bans]
 multiple-versions = "warn"
+# 拒绝一切通配版本依赖（工作区内部依赖已在 Cargo.toml 钉死 version）
 wildcards = "deny"
 highlight = "all"
 

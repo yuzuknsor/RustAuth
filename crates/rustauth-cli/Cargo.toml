@@ -10,4 +10,4 @@ name = "rustauth-cli"
 path = "src/main.rs"
 
 [dependencies]
-rustauth-core = { path = "../rustauth-core" }
+rustauth-core = { path = "../rustauth-core", version = "0.1.0" }
