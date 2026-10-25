@@ -3,13 +3,16 @@
 
 //! Provider 抽象：enum dispatch（提供商为封闭集，穷举优于动态分发）。
 
+use std::fmt;
+
 use super::error::OtpError;
 use super::steam;
 use super::totp;
 use super::totp::HmacAlgo;
 
 /// 通用码参数（Google/Microsoft/Steam/Battle.net 共用）。
-#[derive(Debug, Clone)]
+/// Debug 输出对密钥脱敏（authenticator 安全基线）。
+#[derive(Clone)]
 pub struct CodeConfig {
     pub secret: Vec<u8>,
     pub digits: u32,
@@ -17,6 +20,21 @@ pub struct CodeConfig {
     pub hmac: HmacAlgo,
     /// 与本地时钟的偏移（毫秒，>0 表示服务器快于本地）
     pub time_offset_ms: i64,
+}
+
+impl fmt::Debug for CodeConfig {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("CodeConfig")
+            .field(
+                "secret",
+                &format_args!("[REDACTED {} bytes]", self.secret.len()),
+            )
+            .field("digits", &self.digits)
+            .field("period_secs", &self.period_secs)
+            .field("hmac", &self.hmac)
+            .field("time_offset_ms", &self.time_offset_ms)
+            .finish()
+    }
 }
 
 impl CodeConfig {
@@ -40,7 +58,7 @@ impl CodeConfig {
 }
 
 /// 验证器类型（封闭集）。
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub enum Provider {
     /// 基于时间的标准 OTP（Google 等）
     Totp(CodeConfig),
@@ -50,6 +68,18 @@ pub enum Provider {
     Steam(CodeConfig),
     /// Battle.net（8 位 TOTP——原实现未重写码生成，即标准 TOTP）
     BattleNet(CodeConfig),
+}
+
+/// 内层 CodeConfig 的 Debug 已脱敏，直接透传。
+impl fmt::Debug for Provider {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Totp(c) => f.debug_tuple("Totp").field(c).finish(),
+            Self::Hotp(c, n) => f.debug_tuple("Hotp").field(c).field(n).finish(),
+            Self::Steam(c) => f.debug_tuple("Steam").field(c).finish(),
+            Self::BattleNet(c) => f.debug_tuple("BattleNet").field(c).finish(),
+        }
+    }
 }
 
 impl Provider {

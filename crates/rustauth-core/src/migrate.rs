@@ -61,8 +61,8 @@ impl fmt::Display for MigrateError {
 
 impl std::error::Error for MigrateError {}
 
-/// 迁移后的旧版验证器。
-#[derive(Debug, Clone)]
+/// 迁移后的旧版验证器。Debug 对密钥脱敏（authenticator 安全基线）。
+#[derive(Clone)]
 pub struct LegacyAuthenticator {
     pub name: String,
     /// XML type 属性原文（如 WinAuth.BattleNetAuthenticator）
@@ -73,6 +73,24 @@ pub struct LegacyAuthenticator {
     pub hmac: HmacAlgo,
     pub time_offset_ms: i64,
     pub counter: Option<u64>,
+}
+
+impl fmt::Debug for LegacyAuthenticator {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("LegacyAuthenticator")
+            .field("name", &self.name)
+            .field("legacy_type", &self.legacy_type)
+            .field(
+                "secret",
+                &format_args!("[REDACTED {} bytes]", self.secret.len()),
+            )
+            .field("digits", &self.digits)
+            .field("period_secs", &self.period_secs)
+            .field("hmac", &self.hmac)
+            .field("time_offset_ms", &self.time_offset_ms)
+            .field("counter", &self.counter)
+            .finish()
+    }
 }
 
 impl LegacyAuthenticator {

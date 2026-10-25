@@ -10,3 +10,7 @@
 # 本地实验与临时
 /tmp/
 *.local.*
+
+# 防密钥误提交：vault 文件与旧版配置永不入库
+*.vault
+winauth.xml

@@ -13,7 +13,8 @@ use crate::otp::totp::HmacAlgo;
 use crate::vault::error::VaultError;
 
 /// 磁盘上的 provider 表示（格式见 docs/vault-format-v1.md）。
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+/// Debug 对密钥脱敏（authenticator 安全基线）。
+#[derive(Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ProviderSer {
     pub kind: String,
     pub secret_b32: String,
@@ -24,6 +25,23 @@ pub struct ProviderSer {
     pub time_offset_ms: i64,
     #[serde(default)]
     pub counter: Option<u64>,
+}
+
+impl std::fmt::Debug for ProviderSer {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("ProviderSer")
+            .field("kind", &self.kind)
+            .field(
+                "secret_b32",
+                &format_args!("[REDACTED {} chars]", self.secret_b32.len()),
+            )
+            .field("digits", &self.digits)
+            .field("period_secs", &self.period_secs)
+            .field("algorithm", &self.algorithm)
+            .field("time_offset_ms", &self.time_offset_ms)
+            .field("counter", &self.counter)
+            .finish()
+    }
 }
 
 impl TryFrom<&Provider> for ProviderSer {
@@ -83,12 +101,24 @@ impl TryFrom<&ProviderSer> for Provider {
 }
 
 /// 磁盘上的单条目。
-#[derive(Debug, Clone, Serialize, Deserialize)]
+/// Debug 透传已脱敏的 ProviderSer。
+#[derive(Clone, Serialize, Deserialize)]
 pub struct VaultEntrySer {
     pub id: String,
     pub name: String,
     pub created_ms: i64,
     pub provider: ProviderSer,
+}
+
+impl std::fmt::Debug for VaultEntrySer {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("VaultEntrySer")
+            .field("id", &self.id)
+            .field("name", &self.name)
+            .field("created_ms", &self.created_ms)
+            .field("provider", &self.provider)
+            .finish()
+    }
 }
 
 /// base64 编解码助手（供 wrap 层使用）。
