@@ -11,5 +11,26 @@ path = "src/main.rs"
 
 [dependencies]
 rustauth-core = { path = "../rustauth-core" }
+# glow 后端：避开 wgpu × windows crate 的版本纠缠，托盘常驻应用足够
+eframe = { version = "0.37", default-features = false, features = [
+  "glow",
+  "default_fonts",
+  "accesskit",
+] }
+egui = "0.37"
+crossbeam-channel = "0.5"
+tray-icon = "0.26"
+global-hotkey = "0.9"
+arboard = "3"
+dirs = "7"
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+thiserror.workspace = true
+
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.58", features = [
+  "Win32_Foundation",
+  "Win32_System_Threading",
+] }
 
 [dev-dependencies]
