@@ -142,6 +142,7 @@ impl RustAuthApp {
             self.clipboard = arboard::Clipboard::new().ok();
         }
         if let Some(cb) = &mut self.clipboard {
+            // 当前剪贴板值由定时清除覆盖（默认 30s，见设置）
             if cb.set_text(code.to_string()).is_ok() {
                 let secs = self.settings.clipboard_clear_secs;
                 self.clipboard_clear_at = if secs > 0 {
