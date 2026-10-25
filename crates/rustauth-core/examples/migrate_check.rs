@@ -18,14 +18,19 @@ fn main() {
         std::process::exit(1);
     }
     let xml = std::fs::read_to_string(&args[1]).expect("读取配置失败");
-    let password = args.get(2).map(|s| s.as_str());
+    let password = args.get(2).filter(|s| !s.is_empty()).map(|s| s.as_str());
+    // 可选第 3 参：固定 Unix 秒（跨实现对拍用）
+    let fixed_secs: Option<i64> = args.get(3).and_then(|s| s.parse().ok());
 
     match parse_config(&xml, password) {
         Ok(entries) => {
-            let ms = SystemTime::now()
-                .duration_since(UNIX_EPOCH)
-                .map(|d| d.as_millis() as i64)
-                .unwrap_or(0);
+            let ms = match fixed_secs {
+                Some(s) => s * 1000,
+                None => SystemTime::now()
+                    .duration_since(UNIX_EPOCH)
+                    .map(|d| d.as_millis() as i64)
+                    .unwrap_or(0),
+            };
             println!("迁移条目数: {}", entries.len());
             for e in &entries {
                 let code = e
