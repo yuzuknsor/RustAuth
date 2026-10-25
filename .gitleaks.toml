@@ -1,0 +1,19 @@
+# gitleaks 配置：默认规则 + 公开测试向量白名单
+# 仅放行 RFC 4226/6238 附录官方密钥与 Google 文档示例值的所在文件；
+# 真实密钥永不入库（.gitignore 拦 vault/旧配置 + 开发红线 + 本扫描兜底）。
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "RFC 4226/6238 official test vectors & Google Authenticator doc examples"
+paths = [
+  '''crates/rustauth-core/src/otp/totp\.rs''',
+  '''crates/rustauth-core/src/otp/steam\.rs''',
+  '''crates/rustauth-core/src/otp/provider\.rs''',
+  '''crates/rustauth-core/src/otp/otpauth\.rs''',
+  '''crates/rustauth-core/src/vault/mod\.rs''',
+  '''crates/rustauth-core/examples/seed_vault\.rs''',
+  '''crates/rustauth-core/examples/migrate_check\.rs''',
+  '''scripts/ui_smoke\.ps1''',
+]
