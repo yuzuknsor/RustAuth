@@ -414,10 +414,10 @@ mod tests {
     fn steam_tabs_and_pipes() {
         let secret_hex = "deadbeef01";
         let serial_hex = hex_encode(b"S1");
+        let secret_data = format!("{}|{serial_hex}|6470696431|", tab_data(secret_hex));
         let xml = format!(
             "<WinAuthAuthenticator type=\"WinAuth.Authenticators.SteamAuthenticator\">\
-             <name>s</name><secretdata>{}</secretdata></WinAuthAuthenticator>",
-            format!("{tab}|{serial_hex}|6470696431|", tab = tab_data(secret_hex))
+             <name>s</name><secretdata>{secret_data}</secretdata></WinAuthAuthenticator>"
         );
         let mut got = parse_config(&xml, None).unwrap();
         let e = got.remove(0);
