@@ -24,6 +24,11 @@ allow = [
   "CDLA-Permissive-2.0",
   "Unicode-3.0",
   "Unicode-DFS-2016",
+  # eframe 0.37 内嵌 Ubuntu-Light 字体（数据而非代码），上游默认分发
+  "OFL-1.1",
+  "Ubuntu-font-1.0",
+  # option-ext（dirs 传递依赖）：MPL-2.0 弱文件级 copyleft，与 AGPL-3.0 义务兼容
+  "MPL-2.0",
 ]
 confidence-threshold = 0.93
 
