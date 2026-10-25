@@ -3,7 +3,7 @@ name = "rustauth-core"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
-description = "RustAuth 核心库：TOTP/Steam/Battle.net 验证码、vault 加密存储、旧版迁移"
+description = "RustAuth 核心库：TOTP/Steam/Battle.net 验证码、vault 加密存储、旧版 WinAuth 迁移"
 
 [dependencies]
 hmac = "0.12"
@@ -11,5 +11,17 @@ sha1 = "0.10"
 sha2 = "0.10"
 thiserror.workspace = true
 zeroize.workspace = true
+serde = { workspace = true, features = ["derive"] }
+serde_json.workspace = true
+base64 = "0.22"
+aes-gcm = "0.10"
+getrandom = "0.2"
+argon2 = "0.5"
+
+[target.'cfg(windows)'.dependencies]
+windows = { version = "0.58", features = [
+  "Win32_Foundation",
+  "Win32_Security_Cryptography",
+] }
 
 [dev-dependencies]
