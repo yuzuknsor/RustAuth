@@ -4,6 +4,7 @@
 //! HOTP/TOTP 算法层：RFC 4226/6238、Steam Guard、Battle.net（T1 显示码）。
 
 pub mod error;
+pub mod otpauth;
 pub mod provider;
 pub mod steam;
 pub mod totp;
