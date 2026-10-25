@@ -205,7 +205,7 @@ CLI(clap) · bnet 恢复/注册(T2/T3) · Steam 交易确认（实验） · vaul
 
 ## 7. Git 与发布
 
-- 分支：`master` 冻结原代码不动；`rewrite/` 长期开发；首个可用版 `v0.1.0`。
+- 分支：单分支 `rewrite` 开发（上游代码不进入本仓库，溯源见 NOTICE）；首个可用版 `v0.1.0`。
 - 提交规范：沿用 `feat:/fix:/chore:/docs:` + 中文短句。
 - CI：`ci.yml`（push：test/clippy/fmt）；`release.yml`（tag `v*`：cargo-dist 构建 MSVC 单文件 EXE → GitHub Release，对位 FRecorder 已验证的 tag 触发模式）。
 - 版本：SemVer；0.x 期格式变更允许 bump minor 并带迁移函数。
